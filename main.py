@@ -23,15 +23,16 @@ from convert_wgs_to_utm import convert_wgs_to_utm
 from scale_array import scale_array
 
 cwd = pathlib.Path().absolute() # current working directory
-data = np.loadtxt("input/map_cord_ostrup.txt")
-turbine_cord = data[:,0:2]
-turbine_cord_utm, utm_zone = convert_wgs_to_utm(turbine_cord[:,0],turbine_cord[:,1])
+input_data = np.loadtxt("input/map_cord_ostrup.txt", skiprows=1) # array containing turbine details
+turbine_data = pd.read_csv("input/map_cord_ostrup.txt", delimiter="\t")
 
-data_utm = np.zeros(np.shape(data))
-data_utm += data
-data_utm[:,0:2] = turbine_cord_utm
-extent = calc_extent(data, 2000)
+turbine_data["Longitude_utm"], turbine_data["Latitude_utm"], utm_zone = convert_wgs_to_utm(turbine_data.Longitude, turbine_data.Latitude)
+#%%
+
+extent = calc_extent(turbine_data.Longitude, turbine_data.Latitude, 2000)
 map_boundaries = np.array([extent[0:2],extent[2:4]]).T
+
+
 #### ELEVATION MAP
 fp = cwd.joinpath("temp/MAP.tif") # TIF file path
 elevation.clip(bounds=map_boundaries.flatten(), output= fp)
@@ -65,11 +66,11 @@ latitude_limit_utm = map_boundaries_utm[:,1]
 long_axis_utm = np.linspace(longitude_limit_utm[0], longitude_limit_utm[1], data_len[1]) # generate longitude and latitude coordinates for the contour map
 lat_axis_utm = np.linspace(latitude_limit_utm[0], latitude_limit_utm[1], data_len[0])
 
-hub_elevation = np.zeros(len(turbine_cord[:,0]))
+hub_elevation = np.zeros(len(turbine_data.index))
 for i, x in enumerate(hub_elevation):
-    hub_elevation[i], no, yes = calculate_point_elevation(turbine_cord_utm[i,0], turbine_cord_utm[i,1], map_boundaries_utm, contour_data)
-data[:,2] = data[:,2] + hub_elevation
-data_utm[:,2] = data_utm[:,2] + hub_elevation
+    hub_elevation[i], no, yes = calculate_point_elevation(turbine_data.Longitude_utm[i], turbine_data.Latitude_utm[i], map_boundaries_utm, contour_data)
+input_data[:,2] = input_data[:,2] + hub_elevation
+turbine_data.Height = turbine_data.Height + hub_elevation
 
 
 #%%
@@ -88,9 +89,9 @@ times = pd.date_range("2023-01-01 00:00:00", "2023-12-31 23:59:59", freq="1min")
 for i, t in enumerate(times):
     print(t)
     current_shadow = np.zeros(data_len)
-    for n in np.arange(0, len(data),1):
+    for n in np.arange(0, len(input_data),1):
 
-        turbine_position = data[n,0:3]
+        turbine_position = input_data[n,0:3]
         turbine_position_utm = data_utm[n,0:3]
         
         solar=solar_position(t, turbine_position[1], turbine_position[0])
