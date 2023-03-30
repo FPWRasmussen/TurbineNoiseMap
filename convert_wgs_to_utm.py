@@ -12,6 +12,12 @@ def convert_wgs_to_utm(long, lat):
     if type(lat) == pd.core.series.Series:
        lat = lat.to_numpy()
     
+    if long.ndim > 1:
+        long = long.flatten()
+        
+    if lat.ndim > 1:
+        lat = lat.flatten()
+    
     
     utm_long = str(int(np.floor((long[0] + 180) / 6) % 60 + 1))
     utm_lat = (np.floor((lat[0] + 80) / 8 ) % 19).astype(int)

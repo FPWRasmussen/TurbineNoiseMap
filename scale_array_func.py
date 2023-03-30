@@ -1,8 +1,7 @@
 import numpy as np
 from scipy.interpolate import RectBivariateSpline
 
-
-def scale_array(array, scaling_factor):
+def scale_array_func(array, scaling_factor):
         shape = np.asarray(np.shape(array))
         new_shape = np.round(shape * scaling_factor).astype(int)
         

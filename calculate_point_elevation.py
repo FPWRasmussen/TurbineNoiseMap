@@ -1,7 +1,7 @@
 import numpy as np
 from scipy.interpolate import interpn
 
-def calculate_point_elevation(longitude, latitude, map_boundaries, contour_data):
+def calculate_point_elevation(longitude, latitude, map_data):
     """ 
         Input:
         longitude : longitude of point
@@ -12,15 +12,8 @@ def calculate_point_elevation(longitude, latitude, map_boundaries, contour_data)
         Output:
         point_elevation : elevation of given point
     """
-    data_len = np.shape(contour_data)
+    point_elevation = np.zeros(len(longitude))
+    for i in np.arange(0,len(longitude),1):
+        point_elevation[i] = interpn((map_data.latitude["wsg"], map_data.longitude["wsg"]), map_data.contour_map, [latitude[i], longitude[i]])
     
-    longitude_limit =  map_boundaries[:,0]
-    latitude_limit = map_boundaries[:,1]
-    
-
-    long_axis = np.linspace(longitude_limit[0], longitude_limit[1], data_len[1]) # generate longitude and latitude coordinates for the contour map
-    lat_axis = np.linspace(latitude_limit[0], latitude_limit[1], data_len[0])
-    
-    point_elevation = interpn((lat_axis, long_axis), contour_data, [latitude, longitude])
-    
-    return point_elevation, long_axis, lat_axis
+    return point_elevation
