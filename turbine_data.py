@@ -18,7 +18,8 @@ class turbine_data():
             self.longitude = pd.DataFrame(data = {geod : data[:,0]})
             self.latitude = pd.DataFrame(data = {geod : data[:,1]})
             self.height = data[:,2]
-            self.noise_level = data[:,3]
+            self.rotor_diameter = data[:,3]
+            self.noise_level = data[:,4]
             self.quantity = len(data[:,0]) # amount of turbines
             
             if geod == "wsg":

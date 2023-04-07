@@ -66,11 +66,11 @@ def solar_position(date, lat, lng):
         'altitude': altitude(H, phi, c['dec'])
     }
 
-date_string = "2023-06-15 07:10"
-t = datetime.strptime(date_string, '%Y-%m-%d %H:%M')
-solar=solar_position(t, 52.008809, 4.357634)
-print(solar["azimuth"]*180/np.pi,solar["altitude"]*180/np.pi)
+# date_string = "2023-06-15 07:10"
+# t = datetime.strptime(date_string, '%Y-%m-%d %H:%M')
+# solar=solar_position(t, 52.008809, 4.357634)
+# print(solar["azimuth"]*180/np.pi,solar["altitude"]*180/np.pi)
 
-direction_vector = [-np.cos(solar["altitude"])*np.sin(solar["azimuth"]), -np.cos(solar["altitude"])*np.cos(solar["azimuth"]), np.sin(solar["altitude"])]
-print(direction_vector)
-print(np.sqrt(np.einsum('i,i', direction_vector, direction_vector)))
+# direction_vector = [-np.cos(solar["altitude"])*np.sin(solar["azimuth"]), -np.cos(solar["altitude"])*np.cos(solar["azimuth"]), np.sin(solar["altitude"])]
+# print(direction_vector)
+# print(np.sqrt(np.einsum('i,i', direction_vector, direction_vector)))

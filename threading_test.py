@@ -2,17 +2,29 @@ import numpy as np
 import threading
 import time
 
-n_threads = 3
-
-
-array = np.zeros([5, n_threads])
+threads = 10
+start_time = time.perf_counter()
+array = np.zeros(9999999)
 # Define a function for the thread
-def update_array(array, n):
-    array[:,n] = n+1 
 
-# Create two threads as follows
+def update_array(array):
+    for i in range(len(array)):
+        array[i] = array[i-1]+np.sqrt(i)
 
-for n in np.arange(0, n_threads):
-    threading.Thread(target=update_array,  args= (array, n)).start()
-    print(array)
 
+
+threads_list = []
+for i in range(threads):
+    t = threading.Thread(target=update_array,  args= (array,))
+    t.start()
+    threads_list.append(t)
+
+for i in range(threads):
+    t.join()
+
+
+
+end_time = time.perf_counter()
+
+total_time = end_time - start_time
+print(total_time)
